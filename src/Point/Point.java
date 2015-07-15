@@ -9,46 +9,58 @@ import java.util.ArrayList;
 
 /**
  *
- * @author Arthur C. Baroi
+ * @author dell
  */
-public class TypeTarget
+public class Point
 {
     private ArrayList<Double> coordinates;
 
-    private String target;
-
-    public TypeTarget()
+    /**
+     *
+     */
+    public Point()
     {
         this.coordinates = new ArrayList<Double>();
-        this.target = "";
     }
 
-    public TypeTarget(int i)
+    /**
+     *
+     * @param i
+     */
+    public Point(int i)
     {
         this.coordinates = new ArrayList<Double>(i);
-        this.target = "";
     }
 
-    public TypeTarget(TypeTarget point)
+    /**
+     *
+     * @param point
+     */
+    public Point(Point point)
     {
         this.coordinates = point.coordinates;
-        this.target = point.target;
     }
 
-    public TypeTarget(ArrayList<Double> coordinates, String target)
+    /**
+     *
+     * @param coordinates
+     */
+    public Point(ArrayList<Double> coordinates)
     {
         this.coordinates = coordinates;
-        this.target = target;
     }
 
-    public TypeTarget(double[] coordinates, String target)
+    /**
+     *
+     * @param coordinates
+     */
+    public Point(double[] coordinates)
     {
         this.coordinates = new ArrayList<Double>();
         for(double coordinate : coordinates)
         {
             this.coordinates.add(coordinate);
         }
-        this.target = target;
     }
 
     /**
@@ -79,22 +91,6 @@ public class TypeTarget
     }
 
     /**
-     * @return the target
-     */
-    public String getTarget()
-    {
-        return target;
-    }
-
-    /**
-     * @param target the target to set
-     */
-    public void setTarget(String target)
-    {
-        this.target = target;
-    }
-
-    /**
      *
      * @param obj
      * @return
@@ -107,14 +103,13 @@ public class TypeTarget
         {
             test = false;
         }
-        else if(obj instanceof TypeTarget)
+        else if(obj instanceof Point)
         {
-            TypeTarget point = (TypeTarget) obj;
+            Point point = (Point) obj;
             final int dimensions = this.getDimensions();
             test = dimensions == point.getDimensions();
             if(test)
             {
-                test &= this.target == point.getTarget();
                 for(int i = 0; i < dimensions; i++)
                 {
                     test &= this.getCoordinate(i) == point.getCoordinate(i);
@@ -141,8 +136,7 @@ public class TypeTarget
     {
 
         StringBuilder stringBuilder;
-        stringBuilder = new StringBuilder(this.target);
-        stringBuilder.append("(");
+        stringBuilder = new StringBuilder("(");
         final int lastIndex = this.getDimensions() - 1;
         for(int i = 0; i < lastIndex; i++)
         {
@@ -160,11 +154,11 @@ public class TypeTarget
      * @param b
      * @return
      */
-    public static TypeTarget add(final TypeTarget a, final TypeTarget b)
+    public static Point add(final Point a, final Point b)
     {
-        TypeTarget result;
+        Point result;
         final int dimensions = a.getDimensions();
-        result = new TypeTarget(dimensions);
+        result = new Point(dimensions);
         if(dimensions== b.getDimensions())
         {
             for(int i = 0; i < dimensions; i++)
@@ -185,11 +179,11 @@ public class TypeTarget
      * @param b
      * @return
      */
-    public static TypeTarget subtract(final TypeTarget a, final TypeTarget b)
+    public static Point subtract(final Point a, final Point b)
     {
-        TypeTarget result;
+        Point result;
         final int dimensions = a.getDimensions();
-        result = new TypeTarget(dimensions);
+        result = new Point(dimensions);
         if(dimensions== b.getDimensions())
         {
             for(int i = 0; i < dimensions; i++)
@@ -210,11 +204,11 @@ public class TypeTarget
      * @param factor
      * @return
      */
-    public static TypeTarget scale(final TypeTarget point, final double factor)
+    public static Point scale(final Point point, final double factor)
     {
-        TypeTarget result;
+        Point result;
         final int dimensions = point.getDimensions();
-        result = new TypeTarget(dimensions);
+        result = new Point(dimensions);
         for(int i = 0; i < dimensions; i++)
         {
             result.setCoordinate(i, point.getCoordinate(i)  * factor);
@@ -228,7 +222,7 @@ public class TypeTarget
      * @param destination
      * @return
      */
-    public static double euclideanDistance(final TypeTarget source, final TypeTarget destination)
+    public static double euclideanDistance(final Point source, final Point destination)
     {
         double distance;
         final int dimensions = source.getDimensions();
@@ -253,7 +247,7 @@ public class TypeTarget
      * @param destination
      * @return
      */
-    public static double manhattanDistance(final TypeTarget source, final TypeTarget destination)
+    public static double manhattanDistance(final Point source, final Point destination)
     {
         double distance;
         final int dimensions = source.getDimensions();
@@ -271,4 +265,5 @@ public class TypeTarget
         }
         return distance;
     }
+    
 }

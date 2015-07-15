@@ -5,6 +5,7 @@
  */
 package Normalization;
 
+import Point.Point;
 import java.util.ArrayList;
 
 /**

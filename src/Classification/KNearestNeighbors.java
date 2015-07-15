@@ -5,6 +5,7 @@
  */
 package Classification;
 
+import Point.*;
 import java.util.ArrayList;
 
 /**
@@ -53,32 +54,32 @@ public class KNearestNeighbors
      * @param targetPoint
      * @return
      */
-    public static Point predictPoint(final ArrayList<Point> sortedPoints, final int numberNeighbors, final Point targetPoint)
+    public static TypeTarget predictPoint(final ArrayList<TypeTarget> sortedPoints, final int numberNeighbors, final TypeTarget targetPoint)
     {
-        Point resultPoint;
+        TypeTarget resultPoint;
         ArrayList<String> types;
         ArrayList<Double> weights;
         int index;
-        Point currentPoint;
+        TypeTarget currentPoint;
         double inverseDistance;
         double maximum;
         Double weight;
-        resultPoint = new Point(targetPoint.getX(), targetPoint.getY());
+        resultPoint = new TypeTarget(targetPoint);
         types = new ArrayList<String>();
         weights = new ArrayList<Double>();
         index = -1;
         for(int i = 0; i < numberNeighbors; i++)
         {
             currentPoint = sortedPoints.get(i);
-            inverseDistance = 1.0 / Point.euclideanDistance(targetPoint, currentPoint);
-            if(!types.contains(currentPoint.getType()))
+            inverseDistance = 1.0 / TypeTarget.euclideanDistance(targetPoint, currentPoint);
+            if(!types.contains(currentPoint.getTarget()))
             {
-                types.add(currentPoint.getType());
+                types.add(currentPoint.getTarget());
                 weights.add(inverseDistance);
             }
             else
             {
-                index = types.indexOf(currentPoint.getType());
+                index = types.indexOf(currentPoint.getTarget());
                 weights.set(index, weights.get(index) + inverseDistance);
             }
         }
@@ -92,7 +93,7 @@ public class KNearestNeighbors
                 index = i;
             }
         }
-        resultPoint.setType(types.get(index));
+        resultPoint.setTarget(types.get(index));
         return resultPoint;
     }
 

@@ -5,8 +5,8 @@
  */
 package Regression;
 
+import Point.TypeTarget;
 import java.util.ArrayList;
-import Point.*;
 
 /**
  *
@@ -14,6 +14,8 @@ import Point.*;
  */
 public class Logistic
 {
+    private ArrayList<Double> theta;
+    
     private double theta0;
 
     private double theta1;
@@ -25,9 +27,12 @@ public class Logistic
      */
     public Logistic()
     {
-        this.theta0 = 0.0;
-        this.theta1 = 0.0;
-        this.theta2 = 0.0;
+        this.theta = new ArrayList<Double>();
+    }
+
+    public Logistic(ArrayList<Double> theta)
+    {
+        this.theta = theta;
     }
 
     /**
@@ -52,6 +57,24 @@ public class Logistic
     {
         this.theta1 = theta1;
         this.theta2 = theta2;
+    }
+
+    /**
+     * @param i
+     * @return
+     */
+    public double getTheta(int i)
+    {
+        return this.theta.get(i);
+    }
+
+    /**
+     * @param i
+     * @param d
+     */
+    public void setTheta(int i, double d)
+    {
+        this.theta.set(i, d);
     }
 
     /**
@@ -108,9 +131,15 @@ public class Logistic
      * @param point
      * @return
      */
-    public static double calculateHypothesis(final Logistic regressionCoefficients, final NumericalTarget point)
+    public static double calculateHypothesis(final Logistic regressionCoefficients, final TypeTarget point)
     {
-        return regressionCoefficients.theta0 + regressionCoefficients.theta1 * point.getX1() + regressionCoefficients.theta2 * point.getX2();
+        double hypothesis;
+        hypothesis = regressionCoefficients.getTheta(0);
+        for (int i = 0; i < point.getDimensions(); i++)
+        {
+            hypothesis += regressionCoefficients.getTheta(i + 1) * point.getCoordinate(i);
+        }
+        return hypothesis;
     }
 
     /**
@@ -119,7 +148,7 @@ public class Logistic
      * @param point
      * @return
      */
-    public static double calculateLogisticFunction(final Logistic regressionCoefficients, final NumericalTarget point)
+    public static double calculateLogisticFunction(final Logistic regressionCoefficients, final TypeTarget point)
     {
         return 1.0 / (1.0 + Math.pow(Math.E, -(calculateHypothesis(regressionCoefficients, point))));
     }
@@ -131,7 +160,7 @@ public class Logistic
      * @param regressionCoefficients
      * @return
      */
-    public static double hypothesisError(final double target, final NumericalTarget point, final Logistic regressionCoefficients)
+    public static double hypothesisError(final double target, final TypeTarget point, final Logistic regressionCoefficients)
     {
         final double output;
         output = calculateLogisticFunction(regressionCoefficients, point);
@@ -142,19 +171,19 @@ public class Logistic
      *
      * @param targetType
      * @param oldRegressionCoefficients
-     * @param dataNumericalTargets
+     * @param dataTypeTargets
      * @return
      */
-    public static Logistic updateRegressionCoefficients(final String targetType, final Logistic oldRegressionCoefficients, final ArrayList<NumericalTarget> dataNumericalTargets)
+    public static Logistic updateRegressionCoefficients(final String targetType, final Logistic oldRegressionCoefficients, final ArrayList<TypeTarget> dataTypeTargets)
     {
         Logistic newRegressionCoefficients;
         double alpha;
         double hypothesisError;
         newRegressionCoefficients = new Logistic(oldRegressionCoefficients.theta0, oldRegressionCoefficients.theta1, oldRegressionCoefficients.theta2);
-        alpha = 1.0 / dataNumericalTargets.size();
-        for(NumericalTarget point : dataNumericalTargets)
+        alpha = 1.0 / dataTypeTargets.size();
+        for(TypeTarget point : dataTypeTargets)
         {
-            if(point.getType().equals(targetType))
+            if(point.getTarget().equals(targetType))
             {
                 hypothesisError = hypothesisError(1.0, point, newRegressionCoefficients);
             }
@@ -162,9 +191,11 @@ public class Logistic
             {
                 hypothesisError = hypothesisError(0.0, point, newRegressionCoefficients);
             }
-            newRegressionCoefficients.setTheta0(newRegressionCoefficients.getTheta0() + alpha * hypothesisError);
-            newRegressionCoefficients.setTheta1(newRegressionCoefficients.getTheta1() + alpha * hypothesisError * point.getX1());
-            newRegressionCoefficients.setTheta2(newRegressionCoefficients.getTheta2() + alpha * hypothesisError * point.getX2());
+            newRegressionCoefficients.setTheta(0, newRegressionCoefficients.getTheta(0)+ alpha * hypothesisError);
+            for (int i = 0; i < point.getDimensions(); i++)
+            {
+                newRegressionCoefficients.setTheta(i + 1, newRegressionCoefficients.getTheta(i + 1) + alpha * hypothesisError * point.getCoordinate(i));
+            }
         }
         return newRegressionCoefficients;
     }
@@ -199,10 +230,10 @@ public class Logistic
     /**
      *
      * @param targetType
-     * @param dataNumericalTargets
+     * @param dataTypeTargets
      * @return
      */
-    public static Logistic logisticRegression(final String targetType, final ArrayList<NumericalTarget> dataNumericalTargets)
+    public static Logistic logisticRegression(final String targetType, final ArrayList<TypeTarget> dataTypeTargets)
     {
         Logistic oldRegressionCoefficients;
         Logistic newRegressionCoefficients;
@@ -211,7 +242,7 @@ public class Logistic
         while(!isCloseEnough(oldRegressionCoefficients, newRegressionCoefficients))
         {
             oldRegressionCoefficients = newRegressionCoefficients;
-            newRegressionCoefficients = updateRegressionCoefficients(targetType, oldRegressionCoefficients, dataNumericalTargets);
+            newRegressionCoefficients = updateRegressionCoefficients(targetType, oldRegressionCoefficients, dataTypeTargets);
         }
         return newRegressionCoefficients;
     }

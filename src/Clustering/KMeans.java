@@ -5,6 +5,7 @@
  */
 package Clustering;
 
+import Point.Point;
 import java.util.ArrayList;
 import java.util.Iterator;
 

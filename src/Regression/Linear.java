@@ -5,8 +5,8 @@
  */
 package Regression;
 
+import Point.NumericalTarget;
 import java.util.ArrayList;
-import Point.*;
 
 /**
  *
@@ -14,6 +14,8 @@ import Point.*;
  */
 public class Linear
 {
+    private ArrayList<Double> theta;
+    
     private double theta0;
 
     private double theta1;
@@ -34,6 +36,11 @@ public class Linear
         this.theta2 = 0.0;
         this.theta3 = 0.0;
         this.theta4 = 0.0;
+    }
+
+    public Linear(ArrayList<Double> theta)
+    {
+        this.theta = theta;
     }
 
     /**
@@ -66,6 +73,24 @@ public class Linear
         this.theta2 = theta2;
         this.theta3 = theta3;
         this.theta4 = theta4;
+    }
+
+    /**
+     * @param i
+     * @return
+     */
+    public double getTheta(int i)
+    {
+        return this.theta.get(i);
+    }
+
+    /**
+     * @param i
+     * @param d
+     */
+    public void setTheta(int i, double d)
+    {
+        this.theta.set(i, d);
     }
 
     /**
@@ -150,13 +175,32 @@ public class Linear
 
     /**
      *
+     * @param regressionCoefficients
+     * @param point
+     * @return
+     */
+    public static double calculateHypothesis(final Linear regressionCoefficients, final NumericalTarget point)
+    {
+        double hypothesis;
+        hypothesis = regressionCoefficients.getTheta(0);
+        for (int i = 0; i < point.getDimensions(); i++)
+        {
+            hypothesis += regressionCoefficients.getTheta(i + 1) * point.getCoordinate(i);
+        }
+        return hypothesis;
+    }
+
+    /**
+     *
      * @param point
      * @param regressionCoefficients
      * @return
      */
     public static double hypothesisError(final NumericalTarget point, final Linear regressionCoefficients)
     {
-        return (point.getY() - (regressionCoefficients.getTheta0()+ regressionCoefficients.getTheta1() * point.getX1() + regressionCoefficients.getTheta2() * point.getX2() + regressionCoefficients.getTheta3() * point.getX3() + regressionCoefficients.getTheta4() * point.getX4()));
+        final double output;
+        output = calculateHypothesis(regressionCoefficients, point);
+        return (point.getTarget() - output);
     }
 
     /**
@@ -170,32 +214,23 @@ public class Linear
         Linear newRegressionCoefficients;
         double alpha;
         double hypothesisError;
-        double sumOfErrors0;
-        double sumOfErrors1;
-        double sumOfErrors2;
-        double sumOfErrors3;
-        double sumOfErrors4;
+        double sumOfErrors;
         newRegressionCoefficients = new Linear();
         alpha = 0.001;
-        sumOfErrors0 = 0.0;
-        sumOfErrors1 = 0.0;
-        sumOfErrors2 = 0.0;
-        sumOfErrors3 = 0.0;
-        sumOfErrors4 = 0.0;
+        sumOfErrors = 0.0;
         for(NumericalTarget point : dataNumericalTargets)
         {
             hypothesisError = hypothesisError(point, newRegressionCoefficients);
-            sumOfErrors0 += hypothesisError;
-            sumOfErrors1 += hypothesisError * point.getX1();
-            sumOfErrors2 += hypothesisError * point.getX2();
-            sumOfErrors3 += hypothesisError * point.getX3();
-            sumOfErrors4 += hypothesisError * point.getX4();
+            sumOfErrors += hypothesisError;
+            for (int i = 0; i < point.getDimensions(); i++)
+            {
+                sumOfErrors += hypothesisError * point.getCoordinate(i);
+            }
         }
-        newRegressionCoefficients.setTheta0(oldRegressionCoefficients.getTheta0() + alpha * sumOfErrors0);
-        newRegressionCoefficients.setTheta1(oldRegressionCoefficients.getTheta1() + alpha * sumOfErrors1);
-        newRegressionCoefficients.setTheta2(oldRegressionCoefficients.getTheta2() + alpha * sumOfErrors2);
-        newRegressionCoefficients.setTheta3(oldRegressionCoefficients.getTheta3() + alpha * sumOfErrors3);
-        newRegressionCoefficients.setTheta4(oldRegressionCoefficients.getTheta4() + alpha * sumOfErrors4);
+        for (int i = 0; i < newRegressionCoefficients.theta.size(); i++)
+        {
+            newRegressionCoefficients.setTheta(i, oldRegressionCoefficients.getTheta(i) + alpha * sumOfErrors);
+        }
         return newRegressionCoefficients;
     }
 
@@ -236,21 +271,21 @@ public class Linear
 
     /**
      *
-     * @param dataNumericalTargets
+     * @param dataPoints
      * @return
      */
-    public static Linear linearRegression(final ArrayList<NumericalTarget> dataNumericalTargets)
+    public static Linear linearRegression(final ArrayList<NumericalTarget> dataPoints)
     {
         Linear oldRegressionCoefficients;
         NumericalTarget covarianceNumericalTarget;
         Linear newRegressionCoefficients;
         oldRegressionCoefficients = new Linear(0.0, 0.0, 0.0, 0.0, 0.0);
-        covarianceNumericalTarget = NumericalTarget.covariances(dataNumericalTargets);
+        covarianceNumericalTarget = NumericalTarget.covariances(dataPoints);
         newRegressionCoefficients = new Linear(0.0, covarianceNumericalTarget.getX1(), covarianceNumericalTarget.getX2(), covarianceNumericalTarget.getX3(), covarianceNumericalTarget.getX4());
         while(!isCloseEnough(oldRegressionCoefficients, newRegressionCoefficients))
         {
             oldRegressionCoefficients = newRegressionCoefficients;
-            newRegressionCoefficients = updateRegressionCoefficients(oldRegressionCoefficients, dataNumericalTargets);
+            newRegressionCoefficients = updateRegressionCoefficients(oldRegressionCoefficients, dataPoints);
         }
         return newRegressionCoefficients;
     }
