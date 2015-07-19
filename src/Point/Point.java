@@ -25,20 +25,20 @@ public class Point
 
     /**
      *
+     * @param point
+     */
+    public Point(Point point)
+    {
+        this.coordinates = new ArrayList<Double>(point.coordinates);
+    }
+
+    /**
+     *
      * @param i
      */
     public Point(int i)
     {
         this.coordinates = new ArrayList<Double>(i);
-    }
-
-    /**
-     *
-     * @param point
-     */
-    public Point(Point point)
-    {
-        this.coordinates = point.coordinates;
     }
 
     /**
@@ -159,7 +159,7 @@ public class Point
         Point result;
         final int dimensions = a.getDimensions();
         result = new Point(dimensions);
-        if(dimensions== b.getDimensions())
+        if(dimensions == b.getDimensions())
         {
             for(int i = 0; i < dimensions; i++)
             {
@@ -184,7 +184,7 @@ public class Point
         Point result;
         final int dimensions = a.getDimensions();
         result = new Point(dimensions);
-        if(dimensions== b.getDimensions())
+        if(dimensions == b.getDimensions())
         {
             for(int i = 0; i < dimensions; i++)
             {
@@ -211,7 +211,7 @@ public class Point
         result = new Point(dimensions);
         for(int i = 0; i < dimensions; i++)
         {
-            result.setCoordinate(i, point.getCoordinate(i)  * factor);
+            result.setCoordinate(i, point.getCoordinate(i) * factor);
         }
         return result;
     }
@@ -225,13 +225,16 @@ public class Point
     public static double euclideanDistance(final Point source, final Point destination)
     {
         double distance;
-        final int dimensions = source.getDimensions();
+        final int dimensions;
+        double coordinateDifference;
         distance = 0.0;
-        if(dimensions== source.getDimensions())
+        dimensions = source.getDimensions();
+        if(dimensions == destination.getDimensions())
         {
             for(int i = 0; i < dimensions; i++)
             {
-                distance += (source.getCoordinate(i) - source.getCoordinate(i)) * (source.getCoordinate(i) - source.getCoordinate(i));
+                coordinateDifference = source.getCoordinate(i) - source.getCoordinate(i);
+                distance += (coordinateDifference) * (coordinateDifference);
             }
         }
         else
@@ -250,13 +253,16 @@ public class Point
     public static double manhattanDistance(final Point source, final Point destination)
     {
         double distance;
-        final int dimensions = source.getDimensions();
+        final int dimensions;
+        double coordinateDifference;
         distance = 0.0;
-        if(dimensions== source.getDimensions())
+        dimensions = source.getDimensions();
+        if(dimensions == destination.getDimensions())
         {
             for(int i = 0; i < dimensions; i++)
             {
-                distance += Math.abs(source.getCoordinate(i) - source.getCoordinate(i));
+                coordinateDifference = source.getCoordinate(i) - source.getCoordinate(i);
+                distance += Math.abs(coordinateDifference);
             }
         }
         else
@@ -265,5 +271,5 @@ public class Point
         }
         return distance;
     }
-    
+
 }

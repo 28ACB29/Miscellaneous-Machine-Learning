@@ -6,6 +6,7 @@
 package Regression;
 
 import Point.NumericalTarget;
+import Point.Point;
 import java.util.ArrayList;
 
 /**
@@ -15,64 +16,35 @@ import java.util.ArrayList;
 public class Linear
 {
     private ArrayList<Double> theta;
-    
-    private double theta0;
-
-    private double theta1;
-
-    private double theta2;
-
-    private double theta3;
-
-    private double theta4;
 
     /**
      *
      */
     public Linear()
     {
-        this.theta0 = 0.0;
-        this.theta1 = 0.0;
-        this.theta2 = 0.0;
-        this.theta3 = 0.0;
-        this.theta4 = 0.0;
+        this.theta = new ArrayList<Double>();
+    }
+
+    /**
+     *
+     * @param linear
+     */
+    public Linear(Linear linear)
+    {
+        this.theta = new ArrayList<Double>(linear.theta);
+    }
+
+    /**
+     *
+     */
+    public Linear(int i)
+    {
+        this.theta = new ArrayList<Double>(i);
     }
 
     public Linear(ArrayList<Double> theta)
     {
-        this.theta = theta;
-    }
-
-    /**
-     *
-     * @param theta0
-     * @param theta1
-     * @param theta2
-     * @param theta3
-     * @param theta4
-     */
-    public Linear(double theta0, double theta1, double theta2, double theta3, double theta4)
-    {
-        this.theta0 = theta0;
-        this.theta1 = theta1;
-        this.theta2 = theta2;
-        this.theta3 = theta3;
-        this.theta4 = theta4;
-    }
-
-    /**
-     *
-     * @param theta1
-     * @param theta2
-     * @param theta3
-     * @param theta4
-     */
-    public Linear(double theta1, double theta2, double theta3, double theta4)
-    {
-        this.theta1 = theta1;
-        this.theta2 = theta2;
-        this.theta3 = theta3;
-        this.theta4 = theta4;
+        this.theta = new ArrayList<Double>(theta);
     }
 
     /**
@@ -91,86 +63,6 @@ public class Linear
     public void setTheta(int i, double d)
     {
         this.theta.set(i, d);
-    }
-
-    /**
-     * @return the theta0
-     */
-    public double getTheta0()
-    {
-        return theta0;
-    }
-
-    /**
-     * @param theta0 the theta0 to set
-     */
-    public void setTheta0(double theta0)
-    {
-        this.theta0 = theta0;
-    }
-
-    /**
-     * @return the theta1
-     */
-    public double getTheta1()
-    {
-        return theta1;
-    }
-
-    /**
-     * @param theta1 the theta1 to set
-     */
-    public void setTheta1(double theta1)
-    {
-        this.theta1 = theta1;
-    }
-
-    /**
-     * @return the theta2
-     */
-    public double getTheta2()
-    {
-        return theta2;
-    }
-
-    /**
-     * @param theta2 the theta2 to set
-     */
-    public void setTheta2(double theta2)
-    {
-        this.theta2 = theta2;
-    }
-
-    /**
-     * @return the theta3
-     */
-    public double getTheta3()
-    {
-        return theta3;
-    }
-
-    /**
-     * @param theta3 the theta3 to set
-     */
-    public void setTheta3(double theta3)
-    {
-        this.theta3 = theta3;
-    }
-
-    /**
-     * @return the theta4
-     */
-    public double getTheta4()
-    {
-        return theta4;
-    }
-
-    /**
-     * @param theta4 the theta4 to set
-     */
-    public void setTheta4(double theta4)
-    {
-        this.theta4 = theta4;
     }
 
     /**
@@ -243,30 +135,36 @@ public class Linear
     public static boolean isCloseEnough(Linear oldRegressionCoefficients, Linear newRegressionCoefficients)
     {
         final double threshold;
-        final double oldTheta0;
-        final double oldTheta1;
-        final double oldTheta2;
-        final double oldTheta3;
-        final double oldTheta4;
-        final double newTheta0;
-        final double newTheta1;
-        final double newTheta2;
-        final double newTheta3;
-        final double newTheta4;
         double distance;
-        threshold = 0.05;
-        oldTheta0 = oldRegressionCoefficients.getTheta0();
-        oldTheta1 = oldRegressionCoefficients.getTheta1();
-        oldTheta2 = oldRegressionCoefficients.getTheta2();
-        oldTheta3 = oldRegressionCoefficients.getTheta3();
-        oldTheta4 = oldRegressionCoefficients.getTheta4();
-        newTheta0 = newRegressionCoefficients.getTheta0();
-        newTheta1 = newRegressionCoefficients.getTheta1();
-        newTheta2 = newRegressionCoefficients.getTheta2();
-        newTheta3 = newRegressionCoefficients.getTheta3();
-        newTheta4 = newRegressionCoefficients.getTheta4();
-        distance = Math.sqrt((oldTheta0 - newTheta0) * (oldTheta1 - newTheta1) + (oldTheta1 - newTheta1) * (oldTheta1 - newTheta1) + (oldTheta2 - newTheta2) * (oldTheta2 - newTheta2) + (oldTheta3 - newTheta3) * (oldTheta3 - newTheta3) + (oldTheta4 - newTheta4) * (oldTheta4 - newTheta4));
-        return distance < threshold;
+        threshold = 0.005;
+        distance = 0.0;
+        for(int i = 0; i < oldRegressionCoefficients.theta.size(); i++)
+        {
+            distance += (oldRegressionCoefficients.getTheta(i) - newRegressionCoefficients.getTheta(i)) * (oldRegressionCoefficients.getTheta(i) - newRegressionCoefficients.getTheta(i));
+        }
+        return Math.sqrt(distance) < threshold;
+    }
+
+    /**
+     *
+     * @param dataPoints
+     * @return
+     */
+    public static Point covarianceWithRespectToTarget(final ArrayList<NumericalTarget> dataPoints) {
+        final int dimensions;
+        Point covariancePoint;
+        double coordinateResidual;
+        dimensions = dataPoints.get(0).getDimensions();
+        covariancePoint = new Point(dimensions);
+        for(NumericalTarget dataPoint : dataPoints)
+        {
+            for(int i = 0; i < dimensions; i++)
+            {
+                coordinateResidual = dataPoint.getTarget() - dataPoint.getCoordinate(i);
+                covariancePoint.setCoordinate(i, covariancePoint.getCoordinate(i) + (coordinateResidual * coordinateResidual));
+            }
+        }
+        return covariancePoint;
     }
 
     /**
@@ -276,12 +174,19 @@ public class Linear
      */
     public static Linear linearRegression(final ArrayList<NumericalTarget> dataPoints)
     {
+        final int dimensions;
         Linear oldRegressionCoefficients;
-        NumericalTarget covarianceNumericalTarget;
         Linear newRegressionCoefficients;
-        oldRegressionCoefficients = new Linear(0.0, 0.0, 0.0, 0.0, 0.0);
-        covarianceNumericalTarget = NumericalTarget.covariances(dataPoints);
-        newRegressionCoefficients = new Linear(0.0, covarianceNumericalTarget.getX1(), covarianceNumericalTarget.getX2(), covarianceNumericalTarget.getX3(), covarianceNumericalTarget.getX4());
+        Point covariancePoint;
+        dimensions = dataPoints.get(0).getDimensions();
+        oldRegressionCoefficients = new Linear(dimensions + 1);
+        newRegressionCoefficients = new Linear(dimensions + 1);
+        newRegressionCoefficients.setTheta(0, 0.0);
+        covariancePoint = Linear.covarianceWithRespectToTarget(dataPoints);
+        for(int i = 0; i < dimensions; i++)
+        {
+            newRegressionCoefficients.setTheta(i + 1, covariancePoint.getCoordinate(i));
+        }
         while(!isCloseEnough(oldRegressionCoefficients, newRegressionCoefficients))
         {
             oldRegressionCoefficients = newRegressionCoefficients;

@@ -11,7 +11,7 @@ import java.util.ArrayList;
  *
  * @author Arthur C. Baroi
  */
-public class TypeTarget
+public class TypeTarget extends Point
 {
     private ArrayList<Double> coordinates;
 
@@ -52,33 +52,6 @@ public class TypeTarget
     }
 
     /**
-     * @param i
-     * @return the coordinate
-     */
-    public double getCoordinate(int i)
-    {
-        return coordinates.get(i);
-    }
-
-    /**
-     * @param i
-     * @param coordinate the coordinate to set
-     */
-    public void setCoordinate(int i, double coordinate)
-    {
-        this.coordinates.set(i, coordinate);
-    }
-
-    /**
-     *
-     * @return
-     */
-    public int getDimensions()
-    {
-        return this.coordinates.size();
-    }
-
-    /**
      * @return the target
      */
     public String getTarget()
@@ -114,7 +87,7 @@ public class TypeTarget
             test = dimensions == point.getDimensions();
             if(test)
             {
-                test &= this.target == point.getTarget();
+                test &= this.getTarget().equals(point.getTarget());
                 for(int i = 0; i < dimensions; i++)
                 {
                     test &= this.getCoordinate(i) == point.getCoordinate(i);
@@ -215,60 +188,11 @@ public class TypeTarget
         TypeTarget result;
         final int dimensions = point.getDimensions();
         result = new TypeTarget(dimensions);
+        result.setTarget(point.getTarget());
         for(int i = 0; i < dimensions; i++)
         {
             result.setCoordinate(i, point.getCoordinate(i)  * factor);
         }
         return result;
-    }
-
-    /**
-     *
-     * @param source
-     * @param destination
-     * @return
-     */
-    public static double euclideanDistance(final TypeTarget source, final TypeTarget destination)
-    {
-        double distance;
-        final int dimensions = source.getDimensions();
-        distance = 0.0;
-        if(dimensions== source.getDimensions())
-        {
-            for(int i = 0; i < dimensions; i++)
-            {
-                distance += (source.getCoordinate(i) - source.getCoordinate(i)) * (source.getCoordinate(i) - source.getCoordinate(i));
-            }
-        }
-        else
-        {
-            throw new IllegalArgumentException("Coordinate dimensions do not match.");
-        }
-        return Math.sqrt(distance);
-    }
-
-    /**
-     *
-     * @param source
-     * @param destination
-     * @return
-     */
-    public static double manhattanDistance(final TypeTarget source, final TypeTarget destination)
-    {
-        double distance;
-        final int dimensions = source.getDimensions();
-        distance = 0.0;
-        if(dimensions== source.getDimensions())
-        {
-            for(int i = 0; i < dimensions; i++)
-            {
-                distance += Math.abs(source.getCoordinate(i) - source.getCoordinate(i));
-            }
-        }
-        else
-        {
-            throw new IllegalArgumentException("Coordinate dimensions do not match.");
-        }
-        return distance;
     }
 }

@@ -5,7 +5,9 @@
  */
 package Classification;
 
-import Point.*;
+import Point.NumericalTarget;
+import Point.Point;
+import Point.TypeTarget;
 import java.util.ArrayList;
 
 /**
@@ -45,6 +47,42 @@ public class KNearestNeighbors
             sortedPoints.set(i, temporary);
         }
         return sortedPoints;
+    }
+
+    /**
+     *
+     * @param sortedPoints
+     * @param numberNeighbors
+     * @param targetPoint
+     * @return
+     */
+    public static NumericalTarget predictPoint(final ArrayList<NumericalTarget> sortedPoints, final int numberNeighbors, final NumericalTarget targetPoint)
+    {
+        NumericalTarget resultPoint;
+        ArrayList<Double> values;
+        ArrayList<Double> weights;
+        NumericalTarget currentPoint;
+        double inverseDistance;
+        double sumOfInverseDistances;
+        resultPoint = new NumericalTarget(targetPoint);
+        resultPoint.setTarget(0.0);
+        values = new ArrayList<Double>(numberNeighbors);
+        weights = new ArrayList<Double>(numberNeighbors);
+        for(int i = 0; i < numberNeighbors; i++)
+        {
+            currentPoint = sortedPoints.get(i);
+            inverseDistance = 1.0 / TypeTarget.euclideanDistance(targetPoint, currentPoint);
+            values.add(currentPoint.getTarget());
+            weights.add(inverseDistance);
+        }
+        sumOfInverseDistances = 0.0;
+        for(int i = 0; i < numberNeighbors; i++)
+        {
+            resultPoint.setTarget(resultPoint.getTarget() + values.get(i) * weights.get(i));
+            sumOfInverseDistances += weights.get(i);
+        }
+        resultPoint.setTarget(resultPoint.getTarget() / sumOfInverseDistances);
+        return resultPoint;
     }
 
     /**
