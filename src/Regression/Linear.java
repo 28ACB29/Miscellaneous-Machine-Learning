@@ -7,6 +7,7 @@ package Regression;
 
 import Point.NumericalTarget;
 import Point.Point;
+import Statistics.Covariance;
 import java.util.ArrayList;
 
 /**
@@ -150,28 +151,6 @@ public class Linear
      * @param dataPoints
      * @return
      */
-    public static Point covarianceWithRespectToTarget(final ArrayList<NumericalTarget> dataPoints) {
-        final int dimensions;
-        Point covariancePoint;
-        double coordinateResidual;
-        dimensions = dataPoints.get(0).getDimensions();
-        covariancePoint = new Point(dimensions);
-        for(NumericalTarget dataPoint : dataPoints)
-        {
-            for(int i = 0; i < dimensions; i++)
-            {
-                coordinateResidual = dataPoint.getTarget() - dataPoint.getCoordinate(i);
-                covariancePoint.setCoordinate(i, covariancePoint.getCoordinate(i) + (coordinateResidual * coordinateResidual));
-            }
-        }
-        return covariancePoint;
-    }
-
-    /**
-     *
-     * @param dataPoints
-     * @return
-     */
     public static Linear linearRegression(final ArrayList<NumericalTarget> dataPoints)
     {
         final int dimensions;
@@ -182,7 +161,7 @@ public class Linear
         oldRegressionCoefficients = new Linear(dimensions + 1);
         newRegressionCoefficients = new Linear(dimensions + 1);
         newRegressionCoefficients.setTheta(0, 0.0);
-        covariancePoint = Linear.covarianceWithRespectToTarget(dataPoints);
+        covariancePoint = Covariance.covarianceWithRespectToTarget(dataPoints);
         for(int i = 0; i < dimensions; i++)
         {
             newRegressionCoefficients.setTheta(i + 1, covariancePoint.getCoordinate(i));

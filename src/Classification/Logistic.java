@@ -7,6 +7,7 @@ package Classification;
 
 import Point.Point;
 import Point.TypeTarget;
+import Statistics.Covariance;
 import java.util.ArrayList;
 
 /**
@@ -169,29 +170,6 @@ public class Logistic
      * @param dataPoints
      * @return
      */
-    public static Point covarianceWithRespectToTarget(final String targetType, final ArrayList<TypeTarget> dataPoints) {
-        final int dimensions;
-        Point covariancePoint;
-        double coordinateResidual;
-        dimensions = dataPoints.get(0).getDimensions();
-        covariancePoint = new Point(dimensions);
-        for(TypeTarget dataPoint : dataPoints)
-        {
-            for(int i = 0; i < dimensions; i++)
-            {
-                coordinateResidual = convertTypeToNumber(targetType, dataPoint) - dataPoint.getCoordinate(i);
-                covariancePoint.setCoordinate(i, covariancePoint.getCoordinate(i) + (coordinateResidual * coordinateResidual));
-            }
-        }
-        return covariancePoint;
-    }
-
-    /**
-     *
-     * @param targetType
-     * @param dataPoints
-     * @return
-     */
     public static Logistic logisticRegression(final String targetType, final ArrayList<TypeTarget> dataPoints)
     {
         final int dimensions;
@@ -202,7 +180,7 @@ public class Logistic
         oldRegressionCoefficients = new Logistic(dimensions + 1);
         newRegressionCoefficients = new Logistic(dimensions + 1);
         newRegressionCoefficients.setTheta(0, 0.0);
-        covariancePoint = Logistic.covarianceWithRespectToTarget(targetType, dataPoints);
+        covariancePoint = Covariance.covarianceWithRespectToTarget(targetType, dataPoints);
         for(int i = 0; i < dimensions; i++)
         {
             newRegressionCoefficients.setTheta(i + 1, covariancePoint.getCoordinate(i));

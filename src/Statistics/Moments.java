@@ -37,7 +37,7 @@ public class Moments
                 meanPoint.setCoordinate(i, meanCoordinate + dataCoordinate);
             }
         }
-        meanPoint = Point.scale(meanPoint, 1.0 / (double) dataPoints.size());
+        meanPoint = Point.scale(meanPoint, 1.0 / (double) (dataPoints.size() - 1));
         return meanPoint;
     }
 
@@ -67,7 +67,7 @@ public class Moments
                 standardDeviationPoint.setCoordinate(i, standardDeviationCoordinate + (dataCoordinate - meanCoordinate) * (dataCoordinate - meanCoordinate));
             }
         }
-        standardDeviationPoint = Point.scale(standardDeviationPoint, 1.0 / (double) dataPoints.size());
+        standardDeviationPoint = Point.scale(standardDeviationPoint, 1.0 / (double) (dataPoints.size() - 1));
         for(int i = 0; i < dimensions; i++)
         {
             standardDeviationCoordinate = standardDeviationPoint.getCoordinate(i);

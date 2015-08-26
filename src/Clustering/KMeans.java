@@ -15,7 +15,7 @@ import java.util.Iterator;
  */
 public class KMeans
 {
-    public static int[] kMeansClustering(final Point[] pointSet, final int k)
+    public static int[] kMeansClustering(final ArrayList<Point> pointSet, final int k)
     {
         ArrayList<Point> temporaryPointSet;
         int index;
@@ -28,12 +28,8 @@ public class KMeans
         boolean changed;
         Point mean;
         int count;
-        length = pointSet.length;
-        temporaryPointSet = new ArrayList<Point>(length);
-        for(int i = 0; i < length; i++)
-        {
-            temporaryPointSet.add(i, pointSet[i]);
-        }
+        length = pointSet.size();
+        temporaryPointSet = new ArrayList<Point>(pointSet);
         centroids = new Point[k];
         clusters = new int[length];
         for(int i = 0; i < k; i++)
@@ -44,7 +40,7 @@ public class KMeans
         }
         for(int i = 0; i < length; i++)
         {
-            point = pointSet[i];
+            point = pointSet.get(i);
             distance = Integer.MAX_VALUE;
             index = -1;
             for(int j = 0; j < k; j++)
@@ -64,7 +60,7 @@ public class KMeans
             changed = false;
             for(int i = 0; i < length; i++)
             {
-                point = pointSet[i];
+                point = pointSet.get(i);
                 distance = Integer.MAX_VALUE;
                 index = -1;
                 for(int j = 0; j < k; j++)
@@ -90,7 +86,7 @@ public class KMeans
                     count = 0;
                     for(int j = 0; j < length; j++)
                     {
-                        point = pointSet[i];
+                        point = pointSet.get(i);
                         if(clusters[j] == i)
                         {
                             mean = Point.add(mean, point);
@@ -104,22 +100,22 @@ public class KMeans
         return clusters;
     }
 
-    public static String printClusters(final Point[] pointSet, final int k, final int[] clusterList)
+    public static String printClusters(final ArrayList<Point> pointSet, final int k, final int[] clusterList)
     {
         StringBuilder stringBuilder;
         ArrayList<ArrayList<Point>> pointClusterArray;
         Iterator<Point> iterator;
         stringBuilder = new StringBuilder("");
         pointClusterArray = new ArrayList<ArrayList<Point>>(k);
-        if(pointSet.length == clusterList.length)
+        if(pointSet.size() == clusterList.length)
         {
             for(int i = 0; i < k; i++)
             {
                 pointClusterArray.add(i, new ArrayList<Point>());
             }
-            for(int i = 0; i < pointSet.length; i++)
+            for(int i = 0; i < pointSet.size(); i++)
             {
-                pointClusterArray.get(clusterList[i]).add(pointSet[i]);
+                pointClusterArray.get(clusterList[i]).add(pointSet.get(i));
             }
             for(int i = 0; i < k; i++)
             {

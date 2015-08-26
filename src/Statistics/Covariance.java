@@ -5,8 +5,10 @@
  */
 package Statistics;
 
+import Classification.Logistic;
+import Point.NumericalTarget;
 import Point.Point;
-import static Statistics.Moments.means;
+import Point.TypeTarget;
 import java.util.ArrayList;
 
 /**
@@ -21,21 +23,70 @@ public class Covariance
      * @param dataPoints
      * @return
      */
-    public static Point covariances(final ArrayList<Point> dataPoints)
+    public static Matrix covariances(final ArrayList<Point> dataPoints)
     {
-        Point covariancePoint;
+        final int vectors = dataPoints.size();
+        final int dimensions = dataPoints.get(0).getDimensions();
+        Matrix covarianceMatrix;
         Point meanPoint;
-        covariancePoint = new Point();
-        meanPoint = means(dataPoints);
+        covarianceMatrix = new Matrix(dimensions, dimensions);
+        meanPoint = Moments.means(dataPoints);
         for(Point dataPoint : dataPoints)
         {
-            covariancePoint.setX1(covariancePoint.getX1() + (dataPoint.getX1() - meanPoint.getX1()) * (dataPoint.getY() - meanPoint.getY()));
-            covariancePoint.setX2(covariancePoint.getX2() + (dataPoint.getX2() - meanPoint.getX2()) * (dataPoint.getY() - meanPoint.getY()));
-            covariancePoint.setX3(covariancePoint.getX3() + (dataPoint.getX3() - meanPoint.getX3()) * (dataPoint.getY() - meanPoint.getY()));
-            covariancePoint.setX4(covariancePoint.getX4() + (dataPoint.getX4() - meanPoint.getX4()) * (dataPoint.getY() - meanPoint.getY()));
-            covariancePoint.setY(covariancePoint.getY() + (dataPoint.getY() - meanPoint.getY()) * (dataPoint.getY() - meanPoint.getY()));
+            for(int i = 0; i < dimensions; i++)
+            {
+                for(int j = 0; j < dimensions; j++)
+                {
+                    covarianceMatrix.setElement(i, j, covarianceMatrix.getElement(i, j) + (dataPoint.getCoordinate(i) - meanPoint.getCoordinate(i)) * (dataPoint.getCoordinate(j) - meanPoint.getCoordinate(j)));
+                }
+            }
         }
-        covariancePoint = Point.scale(covariancePoint, 1.0 / (double) dataPoints.size());
+        covarianceMatrix = Matrix.scale(covarianceMatrix, 1.0 / (double) (vectors - 1));
+        return covarianceMatrix;
+    }
+
+    /**
+     *
+     * @param dataPoints
+     * @return
+     */
+    public static Point covarianceWithRespectToTarget(final ArrayList<NumericalTarget> dataPoints) {
+        final int dimensions;
+        Point covariancePoint;
+        double coordinateResidual;
+        dimensions = dataPoints.get(0).getDimensions();
+        covariancePoint = new Point(dimensions);
+        for(NumericalTarget dataPoint : dataPoints)
+        {
+            for(int i = 0; i < dimensions; i++)
+            {
+                coordinateResidual = dataPoint.getTarget() - dataPoint.getCoordinate(i);
+                covariancePoint.setCoordinate(i, covariancePoint.getCoordinate(i) + (coordinateResidual * coordinateResidual));
+            }
+        }
+        return covariancePoint;
+    }
+
+    /**
+     *
+     * @param targetType
+     * @param dataPoints
+     * @return
+     */
+    public static Point covarianceWithRespectToTarget(final String targetType, final ArrayList<TypeTarget> dataPoints) {
+        final int dimensions;
+        Point covariancePoint;
+        double coordinateResidual;
+        dimensions = dataPoints.get(0).getDimensions();
+        covariancePoint = new Point(dimensions);
+        for(TypeTarget dataPoint : dataPoints)
+        {
+            for(int i = 0; i < dimensions; i++)
+            {
+                coordinateResidual = Logistic.convertTypeToNumber(targetType, dataPoint) - dataPoint.getCoordinate(i);
+                covariancePoint.setCoordinate(i, covariancePoint.getCoordinate(i) + (coordinateResidual * coordinateResidual));
+            }
+        }
         return covariancePoint;
     }
 
