@@ -9,7 +9,6 @@ import Point.Point;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  *
@@ -179,7 +178,7 @@ public class HierarchicalAgglomerative
     public Set<Point> getPoints()
     {
         Set<Point> points;
-        points = new TreeSet<Point>();
+        points = new HashSet<Point>();
         if(this.isLeaf())
         {
             points.add(this.node);

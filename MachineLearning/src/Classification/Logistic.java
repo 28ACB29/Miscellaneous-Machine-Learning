@@ -37,12 +37,17 @@ public class Logistic
 
     /**
      *
+     * @param i
      */
     public Logistic(int i)
     {
         this.theta = new ArrayList<Double>(i);
     }
 
+    /**
+     *
+     * @param theta
+     */
     public Logistic(ArrayList<Double> theta)
     {
         this.theta = new ArrayList<Double>(theta);

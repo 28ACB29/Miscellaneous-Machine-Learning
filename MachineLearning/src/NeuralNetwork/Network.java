@@ -22,6 +22,13 @@ public class Network implements Serializable
 
     /**
      *
+     */
+    public Network()
+    {
+    }
+
+    /**
+     *
      * @param layerSizes
      */
     public Network(int[] layerSizes)
@@ -96,13 +103,6 @@ public class Network implements Serializable
     public void setUser(int i, String user)
     {
         this.users.set(i, user);
-    }
-
-    /**
-     *
-     */
-    public Network()
-    {
     }
 
     /**

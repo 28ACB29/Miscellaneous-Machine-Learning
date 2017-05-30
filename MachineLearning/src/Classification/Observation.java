@@ -43,7 +43,7 @@ class Observation
     public boolean setFeature(int i, boolean b)
     {
         return this.featureVector.set(i, b);
-    };
+    }
 
     public boolean getTarget()
     {

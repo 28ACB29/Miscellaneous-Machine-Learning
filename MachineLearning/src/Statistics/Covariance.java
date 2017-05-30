@@ -50,7 +50,8 @@ public class Covariance
      * @param dataPoints
      * @return
      */
-    public static Point covarianceWithRespectToTarget(final ArrayList<NumericalTarget> dataPoints) {
+    public static Point covarianceWithRespectToTarget(final ArrayList<NumericalTarget> dataPoints)
+    {
         final int dimensions;
         Point covariancePoint;
         double coordinateResidual;
@@ -73,7 +74,8 @@ public class Covariance
      * @param dataPoints
      * @return
      */
-    public static Point covarianceWithRespectToTarget(final String targetType, final ArrayList<TypeTarget> dataPoints) {
+    public static Point covarianceWithRespectToTarget(final String targetType, final ArrayList<TypeTarget> dataPoints)
+    {
         final int dimensions;
         Point covariancePoint;
         double coordinateResidual;

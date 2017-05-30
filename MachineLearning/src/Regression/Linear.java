@@ -16,14 +16,14 @@ import java.util.ArrayList;
  */
 public class Linear
 {
-    private ArrayList<Double> theta;
+    private ArrayList<Double> Beta;
 
     /**
      *
      */
     public Linear()
     {
-        this.theta = new ArrayList<Double>();
+        this.Beta = new ArrayList<Double>();
     }
 
     /**
@@ -32,38 +32,43 @@ public class Linear
      */
     public Linear(Linear linear)
     {
-        this.theta = new ArrayList<Double>(linear.theta);
+        this.Beta = new ArrayList<Double>(linear.Beta);
     }
 
     /**
      *
+     * @param i
      */
     public Linear(int i)
     {
-        this.theta = new ArrayList<Double>(i);
+        this.Beta = new ArrayList<Double>(i);
     }
 
-    public Linear(ArrayList<Double> theta)
+    /**
+     *
+     * @param Beta
+     */
+    public Linear(ArrayList<Double> Beta)
     {
-        this.theta = new ArrayList<Double>(theta);
+        this.Beta = new ArrayList<Double>(Beta);
     }
 
     /**
      * @param i
      * @return
      */
-    public double getTheta(int i)
+    public double getBeta(int i)
     {
-        return this.theta.get(i);
+        return this.Beta.get(i);
     }
 
     /**
      * @param i
      * @param d
      */
-    public void setTheta(int i, double d)
+    public void setBeta(int i, double d)
     {
-        this.theta.set(i, d);
+        this.Beta.set(i, d);
     }
 
     /**
@@ -75,10 +80,10 @@ public class Linear
     public static double calculateHypothesis(final Linear regressionCoefficients, final NumericalTarget point)
     {
         double hypothesis;
-        hypothesis = regressionCoefficients.getTheta(0);
+        hypothesis = regressionCoefficients.getBeta(0);
         for (int i = 0; i < point.getDimensions(); i++)
         {
-            hypothesis += regressionCoefficients.getTheta(i + 1) * point.getCoordinate(i);
+            hypothesis += regressionCoefficients.getBeta(i + 1) * point.getCoordinate(i);
         }
         return hypothesis;
     }
@@ -120,9 +125,9 @@ public class Linear
                 sumOfErrors += hypothesisError * point.getCoordinate(i);
             }
         }
-        for (int i = 0; i < newRegressionCoefficients.theta.size(); i++)
+        for (int i = 0; i < newRegressionCoefficients.Beta.size(); i++)
         {
-            newRegressionCoefficients.setTheta(i, oldRegressionCoefficients.getTheta(i) + alpha * sumOfErrors);
+            newRegressionCoefficients.setBeta(i, oldRegressionCoefficients.getBeta(i) + alpha * sumOfErrors);
         }
         return newRegressionCoefficients;
     }
@@ -135,15 +140,15 @@ public class Linear
      */
     public static boolean isCloseEnough(Linear oldRegressionCoefficients, Linear newRegressionCoefficients)
     {
-        final double threshold;
+        final double epsilon;
         double distance;
-        threshold = 0.005;
+        epsilon = 0.005;
         distance = 0.0;
-        for(int i = 0; i < oldRegressionCoefficients.theta.size(); i++)
+        for(int i = 0; i < oldRegressionCoefficients.Beta.size(); i++)
         {
-            distance += (oldRegressionCoefficients.getTheta(i) - newRegressionCoefficients.getTheta(i)) * (oldRegressionCoefficients.getTheta(i) - newRegressionCoefficients.getTheta(i));
+            distance += (oldRegressionCoefficients.getBeta(i) - newRegressionCoefficients.getBeta(i)) * (oldRegressionCoefficients.getBeta(i) - newRegressionCoefficients.getBeta(i));
         }
-        return Math.sqrt(distance) < threshold;
+        return Math.sqrt(distance) < epsilon;
     }
 
     /**
@@ -160,11 +165,11 @@ public class Linear
         dimensions = dataPoints.get(0).getDimensions();
         oldRegressionCoefficients = new Linear(dimensions + 1);
         newRegressionCoefficients = new Linear(dimensions + 1);
-        newRegressionCoefficients.setTheta(0, 0.0);
+        newRegressionCoefficients.setBeta(0, 0.0);
         covariancePoint = Covariance.covarianceWithRespectToTarget(dataPoints);
         for(int i = 0; i < dimensions; i++)
         {
-            newRegressionCoefficients.setTheta(i + 1, covariancePoint.getCoordinate(i));
+            newRegressionCoefficients.setBeta(i + 1, covariancePoint.getCoordinate(i));
         }
         while(!isCloseEnough(oldRegressionCoefficients, newRegressionCoefficients))
         {

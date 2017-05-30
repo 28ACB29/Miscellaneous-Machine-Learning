@@ -50,6 +50,10 @@ public class Matrix
         }
     }
 
+    /**
+     *
+     * @param elements
+     */
     public Matrix(ArrayList<ArrayList<Double>> elements)
     {
         this.elements = elements;

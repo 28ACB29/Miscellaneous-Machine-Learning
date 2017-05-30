@@ -212,7 +212,7 @@ public class NumericalTarget extends Point
         result.setTarget(point.getTarget());
         for(int i = 0; i < dimensions; i++)
         {
-            result.setCoordinate(i, point.getCoordinate(i)  * factor);
+            result.setCoordinate(i, point.getCoordinate(i) * factor);
         }
         return result;
     }
